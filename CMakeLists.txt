@@ -12,8 +12,13 @@ file(GLOB_RECURSE SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/zxing/bigint/*.cc
 )
 
+file(GLOB SOURCES2
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+)
+
 add_library(qzxing SHARED
   ${SOURCES}
+  ${SOURCES2}
 )
 
 target_compile_definitions(qzxing PUBLIC
