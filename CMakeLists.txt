@@ -16,7 +16,7 @@ file(GLOB SOURCES2
   ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
-add_library(qzxing ${LIB_TYPE}
+add_library(qzxing
   ${SOURCES}
   ${SOURCES2}
 )
