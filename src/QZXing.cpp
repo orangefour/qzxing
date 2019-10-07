@@ -258,14 +258,14 @@ QRectF getTagRect(const ArrayRef<Ref<ResultPoint> > &resultPoints, const Ref<Bit
 {
     if (resultPoints->size() < 2)
         return QRectF();
-    
+
     int matrixWidth = bitMatrix->getWidth();
     int matrixHeight = bitMatrix->getHeight();
     // 1D barcode
     if (resultPoints->size() == 2) {
         WhiteRectangleDetector detector(bitMatrix);
         std::vector<Ref<ResultPoint> > resultRectPoints = detector.detect();
-        
+
         if (resultRectPoints.size() != 4)
             return QRectF();
 
@@ -353,6 +353,18 @@ QString QZXing::decodeImage(const QImage &image, int maxWidth, int maxHeight, bo
             processingTime = t.elapsed();
             hasSucceded = true;
         }catch(zxing::Exception &e){}
+
+        if(!hasSucceded) {
+          Ref<LuminanceSource> imageRefInv = imageRef->invert();
+          Ref<GlobalHistogramBinarizer> binzInv( new GlobalHistogramBinarizer(imageRefInv) );
+          Ref<BinaryBitmap> bbInv( new BinaryBitmap(binzInv) );
+
+          try {
+            res = decoder->decode(bbInv, hints);
+            processingTime = t.elapsed();
+            hasSucceded = true;
+          }catch(zxing::Exception &e){}
+        }
 
         if(!hasSucceded)
         {
