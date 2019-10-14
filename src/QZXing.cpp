@@ -417,6 +417,18 @@ QString QZXing::decodeImage(const QImage &image, int maxWidth, int maxHeight, bo
             lastDecodeOperationSucceded_ = true;
         } catch(zxing::Exception &/*e*/){}
 
+        if(!lastDecodeOperationSucceded_) {
+          Ref<LuminanceSource> imageRefInv = imageRef->invert();
+          Ref<GlobalHistogramBinarizer> binzInv( new GlobalHistogramBinarizer(imageRefInv) );
+          Ref<BinaryBitmap> bbInv( new BinaryBitmap(binzInv) );
+
+          try {
+            res = decoder->decode(bbInv, hints);
+            processingTime = t.elapsed();
+            lastDecodeOperationSucceded_ = true;
+          }catch(zxing::Exception &/*e*/){}
+        }
+
         if(!lastDecodeOperationSucceded_)
         {
             hints.setTryHarder(true);
