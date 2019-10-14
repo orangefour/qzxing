@@ -294,7 +294,7 @@ void QZXingFilterRunnable::processVideoFrameProbed(SimpleVideoFrame & videoFrame
     case QVideoFrame::Format_YUV420P:
     case QVideoFrame::Format_NV12:
         /// nv12 format, encountered on macOS
-        image_ptr = new QImage(captureRect.targetWidth, captureRect.targetHeight, QImage::Format_Grayscale8);
+        image_ptr = new QImage(width, height, QImage::Format_Grayscale8);
         YUV_NV21_TO_RGB((uchar*) image_ptr->bits(), (const uchar*) yuvPtr, width, height);
         break;
     case QVideoFrame::Format_YUYV:
