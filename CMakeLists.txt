@@ -1,12 +1,5 @@
 find_package(Qt5 COMPONENTS Core Multimedia Quick REQUIRED)
 
-add_definitions(
-  -DQZXING_LIBRARY
-  -DDISABLE_LIBRARY_FEATURES
-  -DZXING_ICONV_CONST
-  -DNO_ICONV
-)
-
 file(GLOB_RECURSE SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/zxing/zxing/*.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/zxing/bigint/*.cc
@@ -24,6 +17,12 @@ add_library(qzxing
 target_compile_definitions(qzxing PUBLIC
   QZXING_QML
   QZXING_MULTIMEDIA
+  QZXING_LIBRARY
+  DISABLE_LIBRARY_FEATURES
+  ZXING_ICONV_CONST
+  NO_ICONV
+  ENABLE_DECODER_QR_CODE
+  ENABLE_ENCODER_GENERIC
 )
 
 target_include_directories(qzxing PUBLIC
