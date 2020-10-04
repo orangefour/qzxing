@@ -37,6 +37,7 @@ Supports barcode decoding for the following types:
         1. [C++/Qt](#howToEncodingCPP)
         1. [Qt Quick](#howToEncodingQtQuick)
 	1. [Encoded text format Information](#howToEncodingFormatExamples)
+1. [Unit test dependency](#unitTestDependency)
 1. [Contact](#contact)
 
 <a name="howToInclude"></a>
@@ -97,13 +98,21 @@ Follows simple code snippets that brefly show the use of the library. For more d
 ### C++/Qt 
 
 ```cpp
-#include <QZXing.h>
+#include "QZXing.h"
 
 int main() 
 {
 	QImage imageToDecode("file.png");
 	QZXing decoder;
+        //mandatory settings
 	decoder.setDecoder( DecoderFormat_QR_CODE | DecoderFormat_EAN_13 );
+
+        //optional settings
+        //decoder.setSourceFilterType(QZXing::SourceFilter_ImageNormal | QZXing::SourceFilter_ImageInverted);
+        decoder.setSourceFilterType(QZXing::SourceFilter_ImageNormal);
+        decoder.setTryHarderBehaviour(QZXing::TryHarderBehaviour_ThoroughScanning | QZXing::TryHarderBehaviour_Rotate);
+
+        //trigger decode
 	QString result = decoder.decodeImage(imageToDecode);
 }
 ```
@@ -114,7 +123,7 @@ int main()
 First register QZXing type to the QML engine.
 
 ```cpp
-#include <QZXing.h>
+#include "QZXing.h"
 
 int main() 
 {
@@ -143,6 +152,13 @@ QZXing{
 
 	enabledDecoders: QZXing.DecoderFormat_QR_CODE
 
+        /////////////
+        //optional
+        tryHarderType: QZXing.TryHarderBehaviour_ThoroughScanning | QZXing.TryHarderBehaviour_Rotate
+
+        imageSourceFilter: QZXing.SourceFilter_ImageNormal //| QZXing.SourceFilter_ImageInverted
+        /////////////
+
 	onDecodingStarted: console.log("Decoding of image started...")
 
 	onTagFound: console.log("Barcode data: " + tag)
@@ -166,7 +182,7 @@ Use the encoding function with its default settings:
 * Error Correction Level: Low (L)
 
 ```cpp
-#include <QZXing.h>
+#include "QZXing.h"
 
 int main() 
 {
@@ -237,6 +253,15 @@ Image{
 Here is a list of contents that have been encoded and tested to be recognizable by the Android ZXing decoding application: 
 [QR Code encoding wiki page](https://github.com/ftylitak/qzxing/wiki/QR-Code-encoding)
 
+<a name="unitTestDependency"></a>
+# Unit test dependency
+In order to run Unit tests in /test folder, the git submodule containing the test resoucres needs to be initialized and/or updated:
+
+```bash
+cd qzxing
+git submodule update --init --recursive
+```
+
 <a name="contact"></a>
 # Contact 
-In case of bug reports or feature requests feel free to open an [issue](https://github.com/ftylitak/qzxing/issues). 
+In case of bug reports or feature requests feel free to open an [issue](https://github.com/ftylitak/qzxing/issues).

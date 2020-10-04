@@ -18,11 +18,11 @@
 #define QZXING_H
 
 #include "QZXing_global.h"
-#include "zxing/ZXing.h"
 
 #include <QObject>
 #include <QImage>
 #include <QVariantList>
+#include <QElapsedTimer>
 
 #include <set>
 
@@ -58,8 +58,12 @@ class
 
     Q_OBJECT
     Q_ENUMS(DecoderFormat)
+    Q_ENUMS(TryHarderBehaviour)
+    Q_ENUMS(SourceFilter)
     Q_PROPERTY(int processingTime READ getProcessTimeOfLastDecoding)
     Q_PROPERTY(uint enabledDecoders READ getEnabledFormats WRITE setDecoder NOTIFY enabledFormatsChanged)
+    Q_PROPERTY(uint tryHarderType READ getTryHarderBehaviour WRITE setTryHarderBehaviour)
+    Q_PROPERTY(uint imageSourceFilter READ getSourceFilterType WRITE setSourceFilterType)
     Q_PROPERTY(bool tryHarder READ getTryHarder WRITE setTryHarder)
     Q_PROPERTY(QVariantList allowedExtensions READ getAllowedExtensions WRITE setAllowedExtensions)
 
@@ -90,6 +94,18 @@ public:
     } ;
     typedef unsigned int DecoderFormatType;
 
+    enum TryHarderBehaviour {
+        TryHarderBehaviour_ThoroughScanning = 1 << 1,
+        TryHarderBehaviour_Rotate = 1 << 2
+    };
+    typedef unsigned int TryHarderBehaviourType;
+
+    enum SourceFilter {
+        SourceFilter_ImageNormal = 1 << 1,
+        SourceFilter_ImageInverted = 1 << 2
+    };
+    typedef unsigned int SourceFilterType;
+
     enum EncoderFormat {
         EncoderFormat_INVALID,
         EncoderFormat_QR_CODE
@@ -102,10 +118,10 @@ public:
         EncodeErrorCorrectionLevel_H
     };
 
-    QZXing(QObject *parent = ZXING_NULLPTR);
+    QZXing(QObject *parent = Q_NULLPTR);
     ~QZXing();
 
-    QZXing(DecoderFormat decodeHints, QObject *parent = ZXING_NULLPTR);
+    QZXing(DecoderFormat decodeHints, QObject *parent = Q_NULLPTR);
 
 #ifdef QZXING_QML
 
@@ -114,13 +130,17 @@ public:
 #endif //QT_VERSION >= Qt 4.7
 
 #if  QT_VERSION >= 0x050000
-    static void registerQMLImageProvider(QQmlEngine& view);
+    static void registerQMLImageProvider(QQmlEngine& engine);
 #endif //QT_VERSION >= Qt 5.0
 
 #endif //QZXING_QML
 
     void setTryHarder(bool tryHarder);
     bool getTryHarder();
+    void setTryHarderBehaviour(TryHarderBehaviourType tryHarderBehaviour);
+    TryHarderBehaviourType getTryHarderBehaviour();
+    void setSourceFilterType(SourceFilterType sourceFilter);
+    SourceFilterType getSourceFilterType();
     void setAllowedExtensions(const QVariantList& extensions);
     QVariantList getAllowedExtensions();
     static QString decoderFormatToString(int fmt);
@@ -230,6 +250,8 @@ signals:
 private:
     zxing::MultiFormatReader *decoder;
     DecoderFormatType enabledDecoders;
+    TryHarderBehaviourType tryHarderType;
+    SourceFilterType imageSourceFilter;
     ImageHandler *imageHandler;
     int processingTime;
     QString foundedFmt;
