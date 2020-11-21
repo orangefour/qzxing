@@ -31,4 +31,4 @@ target_include_directories(qzxing PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/zxing
 )
 
-qt5_use_modules(qzxing Core Multimedia Quick)
+target_link_libraries(qzxing Qt::Core Qt::Multimedia Qt::Quick)
